@@ -416,7 +416,12 @@ class code{
         if(pi.isEmpty()){
             return Collections.emptyList();
         }
-        List <Integer> DC = Arrays.stream(DCV).map(Integer::parseInt).collect(Collectors.toList());
+        List <Integer> DC = new ArrayList<>();
+if(DCV != null && DCV.length != 0 ){
+    DC = Arrays.stream(DCV).map(Integer::parseInt).collect(Collectors.toList());
+}
+
+
         List<BingrpsContainer> Rdc = new ArrayList<>();
         for(BingrpsContainer bin : pi){
             List<Integer> Ndc = new ArrayList<>();
