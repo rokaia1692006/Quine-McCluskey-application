@@ -23,6 +23,7 @@ class ToBin{
             int value = Integer.parseInt(val);
             if(value>max){
                 System.out.println("Invalid input");
+                JOptionPane.showMessageDialog(null,"Invalid input");
                 return null;
             }
             String bin = Integer.toBinaryString(value);
@@ -72,7 +73,7 @@ class BingrpsContainer{
 }
 
 
-class code{
+public class code{
     public  JTable tableprint;
     public  DefaultTableModel tm;
     public  JTextArea Vars;
@@ -85,6 +86,11 @@ class code{
         int n;
         String var[];
     }
+    public static void main(String []args){
+
+        new code().new GUI().gui();
+    }
+
     class GUI{
 
 
@@ -180,41 +186,50 @@ class code{
 
         String dontCare = Dontcare.getText().trim();
         int n = 0;
-        n = Integer.parseInt(numVar.getText().trim());
         String[] all ;
-        if (vars == null || vars.trim().isEmpty() || n <= 0) {
-            System.out.println("No input provided.");
+
+        try{
+            n = Integer.parseInt(numVar.getText().trim());
+            if( n<=0){
+                JOptionPane.showMessageDialog(null,"number of variables cannot be zero");
+                return;
+            }
+
+        }
+        catch(NumberFormatException e){
+            JOptionPane.showMessageDialog(null,"Number of variables not provided.");
+        }
+
+       if (vars == null || vars.isEmpty()) {
+            System.out.println("No terms provided");
             JOptionPane.showMessageDialog(null,"No input provided.");
 
         }
-        String[] var = vars.split(" ");
-        String [] DCV = new String[0];
-        if(dontCare.equals("") || dontCare == null){
-            all = var;
-            DCV = null;
+        else {
+            String[] var = vars.split(" ");
+            String[] DCV = new String[0];
+            if (dontCare.equals("") || dontCare == null) {
+                all = var;
+                DCV = null;
 
+            } else {
+                DCV = dontCare.split(" ");
+                all = Stream.concat(Arrays.stream(DCV), Arrays.stream(var)).toArray(String[]::new);
+            }
+
+
+            List<String> sortedAll = Arrays.asList(all);
+            Collections.sort(sortedAll, Comparator.comparingInt(Integer::parseInt));
+            all = sortedAll.toArray(new String[0]);
+            printagain.setText(Arrays.toString(all));
+            functions(all, n, DCV);
+            numVar.setText("");
+            Dontcare.setText("");
+            Vars.setText("");
         }
-        else{
-            DCV = dontCare.split(" ");
-            all = Stream.concat(Arrays.stream(DCV),Arrays.stream(var)).toArray(String[]::new);
-        }
-
-
-        List <String> sortedAll = Arrays.asList(all);
-        Collections.sort(sortedAll, Comparator.comparingInt(Integer::parseInt));
-        all = sortedAll.toArray(new String[0]);
-        printagain.setText(Arrays.toString(all));
-        functions(all , n ,DCV);
-        numVar.setText("");
-        Dontcare.setText("");
-        Vars.setText("");
-
 
     }
-    public static void main(String []args){
 
-        new code().new GUI().gui();
-    }
     public List<String> functions(String[] var, int n,String[] DCV){
 
         List<BinContainer> grps = ToBin.toBinfn(var,n);
@@ -224,6 +239,7 @@ class code{
         List<BingrpsContainer> pi = PI(grps);
         if(pi.isEmpty()){
             System.out.println("No Prime Implicants found");
+            JOptionPane.showMessageDialog(null,"No input provided.");
             return null;
         }
         System.out.println("Prime Implicants:");
@@ -238,6 +254,8 @@ class code{
         System.out.println("Essential Prime Implicants:");
         if (ess.isEmpty()) {
             System.out.println("No Essential Prime Implicants found");
+            JOptionPane.showMessageDialog(null,"No Essential Prime Implicants found");
+
         } else {
             for (BingrpsContainer container : ess) {
                 System.out.print("Binary = " + container.bin + ", ");
@@ -313,7 +331,7 @@ class code{
                     String Grp = combine(bin.Bin,next.Bin);
                     if(!repeats.contains(numb)){
                         BingrpsContainer nw = BingrpsContainer.initialize(Grp, nums);
-                        MatchPair.computeIfAbsent(count, k -> new ArrayList<>()).add(nw);
+                        MatchPair.computeIfAbsent(count,  i-> new ArrayList<>()).add(nw);
                         repeats.add(numb);
 
                     }
